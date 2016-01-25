@@ -1,0 +1,16 @@
+{
+    "contents" : "# Andrew Fairless, December 2010\n# modified May 2015 for posting onto Github\n# This script executes analyses of (co)variance for Fairless et al 2012\n# Fairless et al 2012, doi: 10.1016/j.bbr.2011.12.001, PMID:  22178318, PMCID:  PMC3474345\n\n# The fictional data in \"altereddata.txt\" were modified from the original \n# empirical data used in Fairless et al 2012.\n# I am using fictional data instead of the original data because I do not have \n# permission of my co-authors to release the data into the public domain.  \n# NOTE:  Because these data are fictional, several important characteristics of\n# these data may be different from those of the original data (e.g., interrater\n# correlations are probably lower, behaviors may not sum properly)\n\n# Each row is a separate mouse.\n# The left-most 3 columns are quasi-independent variables (mouse strain, sex, and age).\n# The right-most 5 columns are dependent variables describing behaviors of the\n# mice during the Social Approach/Choice Test.\n\ndata = read.table(\"altereddata.txt\", header = TRUE)      \n\n# implements the conventional ANCOVA as described in Fairless et al 2012:\n# \"An ANCOVA modeled mouse strain (C57BL/6J vs. BALB/cJ) and sex (female vs. \n# male) as factors of social cylinder investigation (which consisted \n# predominantly of sniffing of the social cylinder) during Phase 2 of the Social \n# Approach Test and age (at 19, 23, 31, 42, and 70 days) as a continuous \n# covariate of social cylinder investigation during Phase 2.\"\naovmodelfull = aov(soc.3rd5min ~ strain * age * sex, data = data)\n\nsink(file = \"conventionalancova.txt\")\naovmodelfull\nsummary(aovmodelfull)\nsink(file = NULL)\n\n# diagnostic plots for the ANCOVA model\npng(file = \"diagnostics, conventionalancova.png\", width = 1280, height = 1024)\nlayout(matrix(c(1, 2 , 3, 4), 2, 2))\nplot(aovmodelfull)\ndev.off()\n\n# implements the robust ANOVA as described in Fairless et al 2012:\n# \"A 20% trimmed means ANOVA, which modeled age as a factor, verified these \n# effects: . . . \"\nsource(\"Rallfun-v13.txt\")\nsource(\"t3wayaf.txt\")\ndepvarcol = 8\ndata2 = data.matrix(cbind(data[ , 1], data[ , 3], data[ , 2], data[ , depvarcol]))\n\nsink(file = \"robustanova.txt\")\npaste(\"The dependent variable is:  \", colnames(data)[depvarcol])\npaste(\"Factor 1 or A is:  \", colnames(data)[1])\npaste(\"Factor 2 or B is:  \", colnames(data)[3])\npaste(\"Factor 3 or C is:  \", colnames(data)[2])\nt3wayaf(2, 5, 2, data2, MAT = T)\nsink(file = NULL)\n",
+    "created" : 1452016335038.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2304669608",
+    "id" : "B3D48701",
+    "lastKnownWriteTime" : 1432994567,
+    "path" : "~/Link to backup/2015 code share/Fairless et al 2012 soc overall/to share/revising.R",
+    "project_path" : "revising.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
